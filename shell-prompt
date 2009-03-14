@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+use File::Basename; # TODO eliminate this dep somehow
 
 # Add this to your zshrc:
 # precmd () {
@@ -17,13 +18,37 @@ my $user = $ENV{USER};
 chomp(my $host = `hostname -s`);
 chomp(my $cols = `tput cols`);
 
+sub in_darcs_repo {
+    my $pwd = $ENV{PWD};
+    return 1 if -d '_darcs';
+
+    while ($pwd ne dirname $pwd) {
+        $pwd = dirname $pwd;
+        return 1 if -d "$pwd/_darcs";
+    }
+
+    return 0;
+}
+
+sub in_git_repo {
+    my $pwd = $ENV{PWD};
+    return 1 if -d '.git';
+
+    while ($pwd ne dirname $pwd) {
+        $pwd = dirname $pwd;
+        return 1 if -d "$pwd/.git";
+    }
+
+    return 0;
+}
+
 # VCS info
 my $vcs;
-if (-d '_darcs') {
+if (in_darcs_repo) {
     $vcs = 'd';
     $vcs .= '*' if `darcs whatsnew` !~ /^No changes/;
 }
-elsif (-d '.git') {
+elsif (in_git_repo) {
     $vcs = 'g';
     my $status = `git status`;
     $vcs .= '*' if $status !~ /nothing to commit/;
