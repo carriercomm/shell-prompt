@@ -80,6 +80,7 @@ print "-<\e[0;33m$vcs\e[1;30m>" if $vcs;
 print ('-' x ($cols - ($lhs_length + $rhs_length)));
 
 # user@host
+$user = 'j' if $user eq 'jasonmay';
 print "\e[1;30m{ \e[0;32m$user\e[m\@\e[0;32m$host\e[1;30m }-";
 
 # newline and $
