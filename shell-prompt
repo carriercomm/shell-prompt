@@ -13,7 +13,7 @@ use File::Basename; # TODO eliminate this dep somehow
 
 $| = 1;
 
-my $user = $ENV{USER};
+my $user = $ENV{USER} eq 'jasonmay' ? 'j' : $ENV{USER};
 (my $pwd = $ENV{PWD}) =~ s{^/(?:Users|home)/\Q$user\E(/|$)}{~$1};
 chomp(my $host = `hostname -s`);
 chomp(my $cols = `tput cols`);
@@ -80,7 +80,6 @@ print "-<\e[0;33m$vcs\e[1;30m>" if $vcs;
 print ('-' x ($cols - ($lhs_length + $rhs_length)));
 
 # user@host
-$user = 'j' if $user eq 'jasonmay';
 print "\e[1;30m{ \e[0;32m$user\e[m\@\e[0;32m$host\e[1;30m }-";
 
 # newline and $
