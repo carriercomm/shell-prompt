@@ -14,7 +14,7 @@ use File::Basename; # TODO eliminate this dep somehow
 $| = 1;
 
 my $user = $ENV{USER};
-(my $pwd = $ENV{PWD}) =~ s{^/(?:Users|home)/\Q$user\E(/|$)}{~$1};
+(my $pwd = $ENV{PWD}) =~ s{^$ENV{HOME}(/|$)}{~$1};
 chomp(my $host = `hostname -s`);
 chomp(my $cols = `tput cols`);
 
