@@ -14,7 +14,7 @@ use File::Basename; # TODO eliminate this dep somehow
 $| = 1;
 
 my $user = $ENV{USER};
-(my $home = $ENV{HOME}) =~ s{/*?}{}; # in case of trailing slash
+(my $home = $ENV{HOME}) =~ s{/*?$}{}; # in case of trailing slash
 (my $pwd = $ENV{PWD}) =~ s{^$home(/|$)}{~$1};
 chomp(my $host = `hostname -s`);
 chomp(my $cols = `tput cols`);
