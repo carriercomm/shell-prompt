@@ -33,11 +33,11 @@ sub in_darcs_repo {
 
 sub in_git_repo {
     my $pwd = $ENV{PWD};
-    return 1 if -d '.git';
 
     while ($pwd ne dirname $pwd) {
+        return 0 if -l $pwd;
+        return 1 if -d '.git';
         $pwd = dirname $pwd;
-        return 1 if -d "$pwd/.git";
     }
 
     return 0;
