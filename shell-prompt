@@ -35,6 +35,7 @@ sub in_git_repo {
     my $pwd = $ENV{PWD};
 
     while ($pwd ne dirname $pwd) {
+        return 0 if basename $pwd eq '.git';
         return 0 if -l $pwd;
         return 1 if -d "$pwd/.git";
         $pwd = dirname $pwd;
