@@ -60,9 +60,9 @@ elsif (in_git_repo) {
 
 my ($lhs_length, $rhs_length);
 sub calc_length {
-    $lhs_length = 2 + length($pwd);
+    $lhs_length = 4 + length($pwd);
     $lhs_length += 3 + length($vcs) if $vcs;
-    $rhs_length = 4 + length($user) + length($host);
+    $rhs_length = 6 + length($user) + length($host);
     $lhs_length + $rhs_length;
 }
 
@@ -73,17 +73,17 @@ while (calc_length > $cols) {
 }
 
 # pwd
-print "\e[1;30m(\e[33m$pwd\e[30m)";
+print "\e[1;30m{ \e[36m$pwd\e[30m }";
 
 # vcs
-print "-(\e[0;36m$vcs\e[1;30m)" if $vcs;
+print "-<\e[0;33m$vcs\e[1;30m>" if $vcs;
 
 # dashes
 print ('-' x ($cols - ($lhs_length + $rhs_length)));
 
 # user@host
-print "\e[1;30m(\e[0;32m$user\@$host\e[1;30m)-";
+print "\e[1;30m{ \e[0;32m$user\e[m\@\e[0;32m$host\e[1;30m }-";
 
 # newline and $
-print "\e[m\n\$ ";
+print "\e[m\n \$ ";
 
