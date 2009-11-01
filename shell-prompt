@@ -13,10 +13,6 @@ use File::Basename; # TODO eliminate this dep somehow
 
 $| = 1;
 
-my $user = $ENV{USER};
-(my $home = $ENV{HOME}) =~ s{/*?$}{}; # in case of trailing slash
-(my $pwd = $ENV{PWD}) =~ s{^$home(/|$)}{~$1};
-chomp(my $host = `hostname -s`);
 chomp(my $cols = `tput cols`);
 
 sub in_darcs_repo {
@@ -58,32 +54,17 @@ elsif (in_git_repo) {
     $vcs =~ s/\*:/*/;
 }
 
-my ($lhs_length, $rhs_length);
-sub calc_length {
-    $lhs_length = 4 + length($pwd);
-    $lhs_length += 3 + length($vcs) if $vcs;
-    $rhs_length = 6 + length($user) + length($host);
-    $lhs_length + $rhs_length;
+my $output = q{};
+if (@ARGV) {
+    # show vcs stuff in separate call, for RPS1/RPROMPT/etc
+    $output .= "\%{\e[1;30m\%}<\%{\e[0;33m\%}$vcs\%{\e[1;30m\%}>\%{\e[m\%}" if $vcs;
+}
+else {
+    $output .= "\%{\e[1;30m\%}[ \%{\e[0;32m\%}\%n\%{\e[m\%}\@\%{\e[0;32m\%}\%m\%{\e[1;30m\%} ->";
+
+    $output .= "\%{\e[1;30m\%} \%{\e[36m\%}\%~\%{\e[30m\%} ] ";
+
+    $output .= "\%{\e[m\%} \$ ";
 }
 
-# Collapse long directory names into one letter abbreviations from the top down
-while (calc_length > $cols) {
-    $pwd =~ s{/([^/])[^/]+/}{/$1/}
-        or last;
-}
-
-# pwd
-print "\e[1;30m{ \e[36m$pwd\e[30m }";
-
-# vcs
-print "-<\e[0;33m$vcs\e[1;30m>" if $vcs;
-
-# dashes
-print ('-' x ($cols - ($lhs_length + $rhs_length)));
-
-# user@host
-print "\e[1;30m{ \e[0;32m$user\e[m\@\e[0;32m$host\e[1;30m }-";
-
-# newline and $
-print "\e[m\n \$ ";
-
+print $output;
