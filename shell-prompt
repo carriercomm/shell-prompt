@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use File::Basename; # TODO eliminate this dep somehow
+use File::Basename;
 
 # Add this to your zshrc:
 # precmd () {
@@ -49,7 +49,7 @@ if (in_darcs_repo) {
 elsif (in_git_repo) {
     $vcs = 'g';
     my $status = `git status`;
-    $vcs .= '*' if $status !~ /nothing to commit/;
+    $vcs .= '*'   if $status !~ /nothing to commit/;
     $vcs .= ":$1" if $status =~ /On branch (.*)/;
     $vcs =~ s/\*:/*/;
 }
@@ -60,9 +60,15 @@ if (@ARGV) {
     $output .= "\%{\e[1;30m\%}<\%{\e[0;33m\%}$vcs\%{\e[1;30m\%}>\%{\e[m\%}" if $vcs;
 }
 else {
-    $output .= "\%{\e[1;30m\%}[ \%{\e[0;32m\%}\%n\%{\e[m\%}\@\%{\e[0;32m\%}\%m\%{\e[1;30m\%} ->";
+    chomp(my $h = `hostname`);
+    my $u = "\%{\e[0;32m\%}\%n\%{\e[m\%}\@\%{\e[0;32m\%}\%m\%{\e[1;30m\%}";
+    $u = "\%{\e[0;32m\%}jarsonmar\%{\e[m\%}"
+        if  $ENV{USER} eq 'jasonmay'
+        and $h eq 'jarsonmar';
 
-    $output .= "\%{\e[1;30m\%} \%{\e[36m\%}\%~\%{\e[30m\%} ] ";
+    $output .= "\%{\e[1;30m\%}[ $u ->";
+
+    $output .= "\%{\e[1;30m\%} \%{\e[36m\%}\%~\%{\e[30m\%} ]";
 
     $output .= "\%{\e[m\%} \$ ";
 }
