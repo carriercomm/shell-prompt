@@ -15,18 +15,6 @@ $| = 1;
 
 chomp(my $cols = `tput cols`);
 
-sub in_darcs_repo {
-    my $pwd = $ENV{PWD};
-
-    while ($pwd ne dirname $pwd) {
-        return 0 if -l $pwd;
-        return 1 if -d "$pwd/_darcs";
-        $pwd = dirname $pwd;
-    }
-
-    return 0;
-}
-
 sub in_git_repo {
     my $pwd = $ENV{PWD};
 
@@ -41,16 +29,11 @@ sub in_git_repo {
 }
 
 # VCS info
-my $vcs;
-if (in_darcs_repo) {
-    $vcs = 'd';
-    $vcs .= '*' if `darcs whatsnew` !~ /^No changes/;
-}
-elsif (in_git_repo) {
-    $vcs = 'g';
+my $vcs = '';
+if (in_git_repo) {
     my $status = `git status`;
-    $vcs .= '*' if $status !~ /nothing to commit/;
-    $vcs .= ":$1" if $status =~ /On branch (.*)/;
+    $vcs .= '-' if $status !~ /nothing to commit/;
+    $vcs .= "$1" if $status =~ /On branch (.*)/;
     $vcs =~ s/\*:/*/;
 }
 
@@ -62,7 +45,7 @@ if (@ARGV) {
 else {
     $output .= "\%{\e[1;30m\%}[ \%{\e[0;32m\%}\%n\%{\e[m\%}\@\%{\e[0;32m\%}\%m\%{\e[1;30m\%} ->";
 
-    $output .= "\%{\e[1;30m\%} \%{\e[36m\%}\%~\%{\e[30m\%} ] ";
+    $output .= "\%{\e[1;30m\%} \%{\e[36m\%}\%~\%{\e[30m\%} ]";
 
     $output .= "\%{\e[m\%} \$ ";
 }
